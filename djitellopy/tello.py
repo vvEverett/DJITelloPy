@@ -415,22 +415,25 @@ class Tello:
         """
         return self.get_state_field('bat')
 
-    def get_udp_video_address(self) -> str:
+    def get_udp_video_address(self, port=11111) -> str:
         """Internal method, you normally wouldn't call this youself.
         """
         address_schema = 'udp://@{ip}:{port}'  # + '?overrun_nonfatal=1&fifo_size=5000'
-        address = address_schema.format(ip=self.VS_UDP_IP, port=self.vs_udp_port)
+        if port != 11111:
+            address = address_schema.format(ip=self.VS_UDP_IP, port=port)
+        else:
+            address = address_schema.format(ip=self.VS_UDP_IP, port=self.VS_UDP_PORT)
         return address
 
-    def get_frame_read(self, with_queue = False, max_queue_len = 32) -> 'BackgroundFrameRead':
+    def get_frame_read(self, port=11111) -> 'BackgroundFrameRead':
         """Get the BackgroundFrameRead object from the camera drone. Then, you just need to call
         backgroundFrameRead.frame to get the actual frame received by the drone.
         Returns:
             BackgroundFrameRead
         """
         if self.background_frame_read is None:
-            address = self.get_udp_video_address()
-            self.background_frame_read = BackgroundFrameRead(self, address, with_queue, max_queue_len)
+            address = self.get_udp_video_address(port)
+            self.background_frame_read = BackgroundFrameRead(self, address)  # also sets self.cap
             self.background_frame_read.start()
         return self.background_frame_read
 
@@ -586,6 +589,9 @@ class Tello:
         # So we better wait. Otherwise, it would give us an error on the following calls.
         self.send_control_command("takeoff", timeout=Tello.TAKEOFF_TIMEOUT)
         self.is_flying = True
+
+    def set_video_port(self, port):
+        self.send_control_command(f"port 8890 {port}")
 
     def land(self):
         """Automatic landing.
