@@ -47,7 +47,7 @@ class FrontEnd(object):
 
         # Init Tello object that interacts with the Tello drone
         # 初始化与Tello交互的Tello对象
-        self.tello = Tello("192.168.3.6")
+        self.tello = Tello("192.168.3.21")
 
         # Drone velocities between -100~100
         # 无人机各方向速度在-100~100之间

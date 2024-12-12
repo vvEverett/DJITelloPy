@@ -138,8 +138,8 @@ class MultiTelloFrontEnd:
                 # Configure video stream
                 tello.streamoff()
                 time.sleep(0.5)
-                tello.set_video_port(port)
-                time.sleep(0.5)
+                # tello.set_video_port(port)
+                # time.sleep(0.5)
                 tello.streamon()
                 time.sleep(0.5)
                 
